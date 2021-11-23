@@ -46,6 +46,29 @@ lcd_init(16);
 lcd_gotoxy(0,0);
 keypad_init();
 
+
+/*lcd_gotoxy(0,0);
+sprintf(str,"%d",eeprom_read_byte(0));
+lcd_puts(str); 
+delay_ms(500);
+
+lcd_gotoxy(0,1);
+sprintf(str,"%d   %d",eeprom_read_word(1),eeprom_read_word(3));
+lcd_puts(str); 
+delay_ms(500); 
+
+lcd_clear();
+sprintf(str,"%d   %d",eeprom_read_word(5),eeprom_read_word(7));
+lcd_puts(str); 
+delay_ms(500);
+
+lcd_clear();
+sprintf(str,"%d   %d",eeprom_read_word(7),eeprom_read_word(9));
+lcd_puts(str); 
+delay_ms(500);
+ */
+//eeprom_write_byte(0,0);
+   
 while (1) 
       { 
                   
@@ -73,9 +96,45 @@ while (1)
           if(mode==1){ 
               PORTC &= ~(3<<4);
               PORTC.4=1;
-              b: 
+              b:
               lcd_clear();
-              lcd_putsf("create new user?");
+              lcd_putsf("set speed:"); 
+              lcd_gotoxy(10,1);
+              lcd_putsf("Next>");
+              lcd_gotoxy(11,0); 
+               data=0; 
+               e:
+               while(key_released());  
+               temp=key_scan(); 
+               if(temp<10){  
+               data=data*10+temp; 
+               sprintf(str,"%d",temp);
+               lcd_puts(str);
+               goto e;
+               }
+              if(temp==15){  
+               printf("%d\r\n",data);
+               lcd_gotoxy(0,1);
+               lcd_putsf("send");
+               lcd_gotoxy(11,0); 
+               lcd_putsf("     ");
+               data=0;
+               lcd_gotoxy(11,0);
+               goto e;
+               } 
+               
+             if(temp==13){  
+               goto b;
+             }
+              if(temp==10){  
+                mode=0;
+             } 
+                
+              else if(temp==14) { 
+              lcd_clear();
+              lcd_putsf("create new user?"); 
+              lcd_gotoxy(0,10);
+              lcd_putsf("Next>"); 
               while(key_released());  
               temp=key_scan();
               if(temp==15) mode = 2; // create user mode   
@@ -93,6 +152,7 @@ while (1)
                      } 
                else if(temp==10) mode=0;    //user mode 
                else if(temp==14 || temp==13)  goto b;
+              }
               } 
           }
           
@@ -167,6 +227,7 @@ while (1)
              if(temp==15){ 
                mode =5; //edit id mode            
              }
+             
              if(temp==14){ 
                 lcd_clear();
                 lcd_puts("edit password?");  
@@ -272,14 +333,42 @@ while (1)
                 }   
           }
           
-          
-          
           if(mode==10){               //user success logged in
               PORTC &= ~(3<<4);
-              PORTC.4=1;
+              PORTC.4=1; 
+              g:
               lcd_clear();
-              lcd_puts("set motor speed:"); 
-              delay_ms(1000);
+              lcd_puts("set speed:"); 
+              lcd_gotoxy(10,1);
+              lcd_putsf("Next>");
+              lcd_gotoxy(11,0); 
+               data=0; 
+               f:
+               while(key_released());  
+               temp=key_scan(); 
+               if(temp<10){  
+               data=data*10+temp; 
+               sprintf(str,"%d",temp);
+               lcd_puts(str);
+               goto f;
+               }
+              if(temp==15){  
+               printf("%d\r\n",data);
+               lcd_gotoxy(0,1);
+               lcd_putsf("send");
+               lcd_gotoxy(11,0); 
+               lcd_putsf("     ");
+               data=0;
+               lcd_gotoxy(11,0);
+               goto f;
+               } 
+               
+             if(temp==13){  
+               goto g;
+             }
+              if(temp==10){  
+                mode=0;
+             } 
           }
       
       }
